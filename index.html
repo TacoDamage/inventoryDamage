@@ -362,10 +362,10 @@
             <span>Filter Kode Barang</span>
             <span class="hint">Ketik sebagian kode untuk mencari</span>
           </div>
-        <input
-          id="filterCode"
-          placeholder="Misal: AA-PE-1024-1 atau cukup AA-PE"
-          oninput="renderItems()" />
+          <input
+            id="filterCode"
+            placeholder="Misal: AA-PE-1024-1 atau cukup AA-PE"
+            oninput="renderItems()" />
         </div>
 
         <div class="table-wrapper">
@@ -408,7 +408,7 @@
     deleteDoc, doc, serverTimestamp, orderBy, query
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // 🔁 PAKAI PROJECT BARU: projeck-ic-non-hpl
+  // PROJECT: projeck-ic-non-hpl
   const firebaseConfig = {
     apiKey: "AIzaSyCQuOcC5KhMP9ilByeKzNTrlxXQ3IHI3Kk",
     authDomain: "projeck-ic-non-hpl.firebaseapp.com",
@@ -471,10 +471,15 @@
   }
 
   async function addLog(message) {
-    await addDoc(logsCol, {
-      message,
-      time: serverTimestamp()
-    });
+    try {
+      await addDoc(logsCol, {
+        message,
+        time: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("Gagal simpan log:", err);
+      // kalau log gagal, jangan ganggu proses utama
+    }
   }
 
   function getStatus(item) {
@@ -549,6 +554,20 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  function startSaving() {
+    isSaving = true;
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Menyimpan...";
+    savingIndicator.style.display = "inline";
+  }
+
+  function stopSaving(originalText) {
+    isSaving = false;
+    saveBtn.disabled = false;
+    if (originalText) saveBtn.textContent = originalText;
+    savingIndicator.style.display = "none";
+  }
+
   itemForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (isSaving) return;
@@ -570,16 +589,14 @@
     const id = itemIdInput.value || null;
     const originalText = saveBtn.textContent;
 
-    try {
-      isSaving = true;
-      saveBtn.disabled = true;
-      saveBtn.textContent = "Menyimpan...";
-      savingIndicator.style.display = "inline";
+    startSaving();
 
+    try {
       if (id) {
         const editor = prompt("Nama pengedit:");
         if (!editor || !editor.trim()) {
           alert("Nama pengedit wajib diisi.");
+          stopSaving(originalText);
           return;
         }
         const old = items.find(i => i.id === id);
@@ -603,10 +620,7 @@
       console.error(err);
       alert("Gagal menyimpan data.");
     } finally {
-      isSaving = false;
-      saveBtn.disabled = false;
-      saveBtn.textContent = originalText;
-      savingIndicator.style.display = "none";
+      stopSaving(originalText);
     }
   });
 
