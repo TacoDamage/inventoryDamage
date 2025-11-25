@@ -1,3 +1,0 @@
-# Xhanz-
-
-PROJECK TIM CC NON HPL
