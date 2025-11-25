@@ -1,411 +1,9 @@
-<!DOCTYPE html>
-<html lang="id" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <title>DATA P1.DAMAGE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --bg-page: #eef1f6;
-      --bg-card: #ffffff;
-      --bg-header: #0f172a;
-      --primary: #2563eb;
-      --primary-soft: #e0edff;
-      --danger: #dc2626;
-      --danger-soft: #fee2e2;
-      --border-soft: #e5e7eb;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --shadow-soft: 0 18px 40px rgba(15,23,42,0.20);
-    }
-
-    [data-theme="dark"] {
-      --bg-page: #020617;
-      --bg-card: #020617;
-      --bg-header: #020617;
-      --primary: #3b82f6;
-      --primary-soft: #1d4ed833;
-      --danger: #f97373;
-      --danger-soft: #3f1818;
-      --border-soft: #1f2937;
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --shadow-soft: 0 20px 45px rgba(0,0,0,0.75);
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top, #dbeafe 0, var(--bg-page) 45%, var(--bg-page) 100%);
-      color: var(--text-main);
-      transition: background-color .25s, color .25s, background .25s;
-    }
-    [data-theme="dark"] body {
-      background: radial-gradient(circle at top, #020617 0, #020617 100%);
-    }
-
-    header {
-      background: var(--bg-header);
-      color: #fff;
-      padding: 12px 24px;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.6);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-    .nav {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .nav-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #60a5fa, #2563eb);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: .9rem;
-      box-shadow: 0 0 0 2px rgba(15,23,42,.5);
-    }
-    .nav-title { display:flex;flex-direction:column;gap:2px; }
-    .nav-title h1 { margin:0;font-size:1.25rem;letter-spacing:.06em; }
-    .nav-title span { font-size:.78rem;opacity:.85; }
-    .nav-right {
-      text-align:right;font-size:.8rem;display:flex;flex-direction:column;
-      gap:4px;align-items:flex-end;
-    }
-    .nav-pill{
-      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
-      border-radius:999px;background:rgba(15,23,42,.7);
-      border:1px solid rgba(148,163,184,.5);font-size:.76rem;
-    }
-    .nav-pill-dot{width:8px;height:8px;border-radius:999px;background:#22c55e;}
-    .nav-creator{opacity:.85;}
-    .theme-toggle{
-      border-radius:999px;border:1px solid rgba(148,163,184,.7);
-      background:rgba(15,23,42,.7);color:#e5e7eb;padding:4px 10px;
-      font-size:.75rem;cursor:pointer;display:inline-flex;align-items:center;
-      gap:6px;transition:background-color .16s,border-color .16s,transform .08s;
-    }
-    .theme-toggle-icon{width:12px;height:12px;border-radius:50%;background:#facc15;}
-    [data-theme="dark"] .theme-toggle-icon{background:#38bdf8;}
-    .theme-toggle:hover{background:rgba(30,64,175,.9);border-color:rgba(191,219,254,.8);}
-    .theme-toggle:active{transform:translateY(1px);}
-
-    main{max-width:1200px;margin:24px auto 32px;padding:0 16px;}
-    .grid{
-      display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.5fr);
-      gap:18px;align-items:flex-start;
-    }
-    @media(max-width:900px){
-      .grid{grid-template-columns:minmax(0,1fr);}
-      .nav{flex-direction:column;align-items:flex-start;}
-      .nav-right{align-items:flex-start;text-align:left;}
-    }
-
-    .card{
-      background:var(--bg-card);border-radius:18px;padding:0;
-      box-shadow:var(--shadow-soft);border:1px solid rgba(148,163,184,.25);
-      overflow:hidden;transition:background-color .25s,border-color .25s,box-shadow .25s;
-    }
-    [data-theme="dark"] .card{border-color:var(--border-soft);}
-    .card-header{
-      padding:11px 16px;border-bottom:1px solid var(--border-soft);
-      display:flex;align-items:center;justify-content:space-between;gap:8px;
-      background:linear-gradient(to right,#f9fafb,#eef2ff);
-    }
-    [data-theme="dark"] .card-header{background:linear-gradient(to right,#020617,#020617);}
-    .card-title{
-      font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:6px;
-      color:var(--text-main);
-    }
-    .card-title::before{content:"";width:4px;height:16px;border-radius:999px;background:var(--primary);}
-    .badge{
-      background:var(--primary-soft);color:var(--primary);
-      padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:600;
-    }
-    .card-body{padding:14px 16px 16px;}
-
-    label{
-      display:block;font-size:.8rem;margin-bottom:4px;color:#4b5563;font-weight:500;
-    }
-    [data-theme="dark"] label{color:#9ca3af;}
-
-    input,textarea,select{
-      width:100%;padding:8px 10px;border-radius:9px;border:1px solid #d1d5db;
-      background:#f9fafb;outline:none;font-size:.9rem;color:var(--text-main);
-      transition:border-color .16s,box-shadow .16s,background-color .16s,color .16s;
-    }
-    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{
-      background:#020617;border-color:#374151;color:var(--text-main);
-    }
-    input:focus,textarea:focus,select:focus{
-      border-color:var(--primary);box-shadow:0 0 0 2px rgba(37,99,235,.25);background:#fff;
-    }
-    [data-theme="dark"] input:focus,[data-theme="dark"] textarea:focus,[data-theme="dark"] select:focus{
-      background:#020617;
-    }
-    textarea{resize:vertical;min-height:70px;}
-    .form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px;}
-    .form-row-full{margin-bottom:10px;}
-
-    button{
-      border-radius:999px;border:none;padding:8px 16px;cursor:pointer;
-      font-size:.9rem;display:inline-flex;align-items:center;justify-content:center;
-      gap:6px;transition:background-color .16s,transform .08s,box-shadow .16s;
-      white-space:nowrap;
-    }
-    button:active{transform:translateY(1px);box-shadow:none;}
-
-    .btn-primary{
-      background:var(--primary);color:#fff;
-      box-shadow:0 4px 10px rgba(37,99,235,.35);
-    }
-    .btn-primary:hover{background:#1d4ed8;}
-    .btn-primary[disabled]{
-      opacity:.6;cursor:not-allowed;box-shadow:none;
-    }
-
-    .btn-secondary{background:#e5e7eb;color:#111827;}
-    [data-theme="dark"] .btn-secondary{background:#111827;color:#e5e7eb;}
-    .btn-secondary:hover{background:#d1d5db;}
-    [data-theme="dark"] .btn-secondary:hover{background:#1f2937;}
-
-    .btn-danger{background:var(--danger);color:#fff;box-shadow:0 4px 10px rgba(220,38,38,.3);}
-    .btn-danger:hover{background:#b91c1c;}
-
-    .btn-danger-soft{
-      background:var(--danger-soft);color:#b91c1c;border-radius:999px;
-      border:1px solid #fecaca;padding-inline:12px;
-    }
-    [data-theme="dark"] .btn-danger-soft{color:#fecaca;border-color:#7f1d1d;}
-    .btn-danger-soft:hover{background:#fecaca;}
-    [data-theme="dark"] .btn-danger-soft:hover{background:#7f1d1d;}
-
-    .btn-secondary,.btn-danger,.btn-danger-soft{
-      font-size:.8rem;padding:6px 13px;
-    }
-
-    .saving-indicator{
-      font-size:.78rem;color:var(--text-muted);display:none;
-    }
-
-    .table-wrapper{
-      border-radius:12px;border:1px solid var(--border-soft);
-      background:#fff;overflow:hidden;margin-bottom:18px;
-    }
-    [data-theme="dark"] .table-wrapper{background:#020617;}
-
-    table{width:100%;border-collapse:collapse;font-size:.85rem;}
-    thead{
-      background:#eef2ff;position:sticky;top:0;z-index:5;
-    }
-    [data-theme="dark"] thead{background:#020617;}
-    th,td{padding:7px 8px;border-bottom:1px solid var(--border-soft);vertical-align:middle;}
-    th{text-align:left;font-weight:600;color:#374151;font-size:.8rem;}
-    [data-theme="dark"] th{color:var(--text-muted);}
-    tbody tr:nth-child(even){background:#f9fafb;}
-    [data-theme="dark"] tbody tr:nth-child(even){background:#020617;}
-    tbody tr:hover{background:#e5f0ff;}
-    [data-theme="dark"] tbody tr:hover{background:#111827;}
-    td:nth-child(5),td:nth-child(6),td:nth-child(7){text-align:center;}
-    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
-    .status-ok{background:#16a34a;}
-    .status-empty{background:#dc2626;}
-    .status-text{font-size:.78rem;}
-
-    .filter-label{
-      display:flex;justify-content:space-between;align-items:baseline;
-      font-size:.78rem;color:#4b5563;margin-bottom:3px;
-    }
-    .filter-label .hint{font-size:.72rem;color:#9ca3af;}
-    #filterCode{background:#f3f4f6;}
-    [data-theme="dark"] #filterCode{
-      background:#020617;border-color:#374151;color:var(--text-main);
-    }
-    #filterCode:focus{background:#fff;}
-    [data-theme="dark"] #filterCode:focus{background:#020617;}
-
-    .log-header-row{
-      margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:8px;
-    }
-    .log-title{font-weight:600;font-size:.9rem;color:var(--text-main);}
-    .log-list{
-      list-style:none;padding:0;margin-top:8px;max-height:230px;overflow-y:auto;
-      font-size:.8rem;border-radius:10px;background:#f9fafb;border:1px solid var(--border-soft);
-    }
-    [data-theme="dark"] .log-list{background:#020617;}
-    .log-list li{border-bottom:1px solid var(--border-soft);padding:6px 10px;}
-    .log-list li:last-child{border-bottom:none;}
-    .log-time{color:var(--text-muted);font-size:.74rem;margin-top:2px;}
-    .log-empty{padding:8px 10px;color:var(--text-muted);font-size:.8rem;}
-  </style>
-</head>
-<body>
-<header>
-  <div class="nav">
-    <div class="nav-left">
-      <div class="nav-logo">D1</div>
-      <div class="nav-title">
-        <h1>DATA P1.DAMAGE</h1>
-        <span>Dashboard stok barang sederhana</span>
-      </div>
-    </div>
-    <div class="nav-right">
-      <div class="nav-pill">
-        <span class="nav-pill-dot"></span>
-        <span>Inventory System</span>
-      </div>
-      <div class="nav-creator">Dibuat oleh: <strong>Farhan Kautsar</strong></div>
-      <button class="theme-toggle" type="button" onclick="toggleTheme()">
-        <span class="theme-toggle-icon"></span>
-        <span id="themeLabel">Dark mode</span>
-      </button>
-    </div>
-  </div>
-</header>
-
-<main>
-  <div class="grid">
-
-    <!-- FORM -->
-    <section class="card">
-      <div class="card-header">
-        <div class="card-title">Form Barang</div>
-        <span class="badge" id="modeBadge">Tambah</span>
-      </div>
-
-      <div class="card-body">
-        <form id="itemForm">
-          <input type="hidden" id="itemId">
-
-          <div class="form-row">
-            <div>
-              <label>Kode Barang</label>
-              <input id="code" required>
-            </div>
-            <div>
-              <label>Jenis Barang</label>
-              <select id="nameInput" required>
-                <option value="">-- Pilih Jenis Barang --</option>
-                <option>ACP</option>
-                <option>TACO SHEET</option>
-                <option>ADESIVE</option>
-                <option>FIDECO</option>
-                <option>ADGING</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div>
-              <label>Kategori</label>
-              <select id="category" required>
-                <option value="">-- Pilih Kategori --</option>
-                <option>DAMAGE ACTIVE</option>
-                <option>DAMAGE TUKER GULING</option>
-                <option>DAMAGE ANOMALI</option>
-              </select>
-            </div>
-            <div>
-              <label>Lokasi / Rak</label>
-              <input id="location" placeholder="cth: Rak A1 / Gudang 1">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div>
-              <label>Jumlah Barang</label>
-              <input id="qty" type="number" min="0" value="0" required>
-            </div>
-          </div>
-
-          <div class="form-row-full">
-            <label>Catatan</label>
-            <textarea id="note" placeholder="Contoh: cat, pecah, grepes, bintik bintik."></textarea>
-          </div>
-
-          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-            <button class="btn-primary" id="saveBtn" type="submit">+ Tambah Barang</button>
-            <button type="button" class="btn-secondary" onclick="resetForm()">Reset</button>
-            <span id="savingIndicator" class="saving-indicator">Menyimpan...</span>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- TABLE + LOG -->
-    <section class="card">
-      <div class="card-header">
-        <div class="card-title">Daftar Barang</div>
-        <button class="btn-danger-soft" type="button" onclick="clearAll()">Hapus Semua</button>
-      </div>
-
-      <div class="card-body">
-        <div class="form-row-full" style="margin-bottom:12px;">
-          <div class="filter-label">
-            <span>Filter Kode Barang</span>
-            <span class="hint">Ketik sebagian kode untuk mencari</span>
-          </div>
-          <input
-            id="filterCode"
-            placeholder="Misal: AA-PE-1024-1 atau cukup AA-PE"
-            oninput="renderItems()" />
-        </div>
-
-        <div class="table-wrapper">
-          <div style="max-height:260px; overflow:auto;">
-            <table>
-              <thead>
-              <tr>
-                <th>Kode</th>
-                <th>Jenis</th>
-                <th>Kategori</th>
-                <th>Lokasi</th>
-                <th>Jumlah</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-              </thead>
-              <tbody id="itemsBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <div class="log-header-row">
-            <div class="log-title">Riwayat Aktivitas</div>
-            <button class="btn-danger" type="button" onclick="resetLogs()">Reset Riwayat</button>
-          </div>
-          <ul id="logList" class="log-list"></ul>
-        </div>
-
-      </div>
-    </section>
-
-  </div>
-</main>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
     getFirestore, collection, getDocs, addDoc, updateDoc,
-    deleteDoc, doc, serverTimestamp, orderBy, query
+    deleteDoc, doc, serverTimestamp, orderBy, query,
+    onSnapshot
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   // PROJECT: projeck-ic-non-hpl
@@ -448,6 +46,7 @@
   const filterCodeInput = document.getElementById("filterCode");
   const themeLabel      = document.getElementById("themeLabel");
 
+  // THEME
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
@@ -458,18 +57,39 @@
     applyTheme(current === "light" ? "dark" : "light");
   };
 
-  async function loadItems() {
+  // REALTIME LISTENER ITEMS
+  function listenItemsRealtime() {
     const q = query(itemsCol, orderBy("createdAt", "desc"));
-    const snap = await getDocs(q);
-    items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    onSnapshot(
+      q,
+      (snap) => {
+        items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        window.renderItems();
+      },
+      (err) => {
+        console.error("Gagal mengambil data items:", err);
+        alert("Gagal mengambil data barang dari Firebase. Silakan cek console (F12 -> Console).");
+      }
+    );
   }
 
-  async function loadLogs() {
+  // REALTIME LISTENER LOGS
+  function listenLogsRealtime() {
     const q = query(logsCol, orderBy("time", "desc"));
-    const snap = await getDocs(q);
-    logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    onSnapshot(
+      q,
+      (snap) => {
+        logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderLogs();
+      },
+      (err) => {
+        console.error("Gagal mengambil riwayat aktivitas:", err);
+        alert("Gagal mengambil riwayat aktivitas dari Firebase. Silakan cek console (F12 -> Console).");
+      }
+    );
   }
 
+  // LOGGING
   async function addLog(message) {
     try {
       await addDoc(logsCol, {
@@ -482,10 +102,12 @@
     }
   }
 
+  // STATUS
   function getStatus(item) {
     return item.qty > 0 ? "ok" : "empty";
   }
 
+  // RENDER ITEMS
   window.renderItems = function () {
     const filter = (filterCodeInput.value || "").trim().toLowerCase();
     itemsBody.innerHTML = "";
@@ -511,6 +133,7 @@
     });
   };
 
+  // RENDER LOGS
   function renderLogs() {
     logList.innerHTML = "";
     if (!logs.length) {
@@ -531,6 +154,7 @@
     });
   }
 
+  // FORM HELPER
   window.resetForm = function () {
     itemForm.reset();
     itemIdInput.value = "";
@@ -557,7 +181,7 @@
   function startSaving() {
     isSaving = true;
     saveBtn.disabled = true;
-    saveBtn.textContent = "Menyimpan...";
+    saveBtn.textContent = "Menyimpan.";
     savingIndicator.style.display = "inline";
   }
 
@@ -568,6 +192,7 @@
     savingIndicator.style.display = "none";
   }
 
+  // SUBMIT FORM
   itemForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (isSaving) return;
@@ -614,7 +239,7 @@
         await addLog(`Menambah "${data.name}" (kode: ${data.code}) dengan jumlah ${data.qty}`);
       }
 
-      await refreshAll();
+      // tidak perlu refreshAll, karena realtime listener sudah update otomatis
       resetForm();
     } catch (err) {
       console.error(err);
@@ -624,6 +249,7 @@
     }
   });
 
+  // DELETE 1 ITEM
   window.deleteItem = async function (id) {
     const item = items.find(i => i.id === id);
     if (!item) return;
@@ -638,13 +264,14 @@
       const ref = doc(db, "items", id);
       await deleteDoc(ref);
       await addLog(`${deleter.trim()} menghapus "${item.name}" (kode: ${item.code}) sebanyak ${item.qty}`);
-      await refreshAll();
+      // realtime listener akan update tabel otomatis
     } catch (err) {
       console.error(err);
       alert("Gagal menghapus data.");
     }
   };
 
+  // HAPUS SEMUA ITEM
   window.clearAll = async function () {
     if (!items.length) return;
     const deleter = prompt("Nama penghapus semua data:");
@@ -663,13 +290,14 @@
         await deleteDoc(d.ref);
       }
       await addLog(`${deleter.trim()} menghapus SEMUA data (${totalItem} item, total ${totalQty} barang)`);
-      await refreshAll();
+      // realtime listener akan update kosong otomatis
     } catch (err) {
       console.error(err);
       alert("Gagal hapus semua data.");
     }
   };
 
+  // RESET LOGS
   window.resetLogs = async function () {
     const pin = prompt("Masukkan PIN admin untuk reset riwayat:");
     if (pin !== ADMIN_PIN) {
@@ -682,26 +310,23 @@
       for (const d of snap.docs) {
         await deleteDoc(d.ref);
       }
-      await refreshAll();
+      // realtime listener akan bikin list kosong otomatis
     } catch (err) {
       console.error(err);
       alert("Gagal reset riwayat.");
     }
   };
 
+  // DUMMY, biar kalau masih ada 'await refreshAll()' nggak error
   async function refreshAll() {
-    await loadItems();
-    await loadLogs();
-    renderItems();
-    renderLogs();
+    // tidak dipakai lagi karena pakai realtime
   }
 
-  (async function init() {
+  // INIT
+  (function init() {
     const savedTheme = localStorage.getItem(THEME_KEY) || "light";
     applyTheme(savedTheme);
-    await refreshAll();
+    listenItemsRealtime();
+    listenLogsRealtime();
   })();
 </script>
-
-</body>
-</html>
